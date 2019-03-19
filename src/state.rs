@@ -1,0 +1,40 @@
+#[derive(Debug, Clone, PartialEq)]
+pub struct State {
+    pub row: u32,
+    pub column: u32,
+}
+
+impl State {
+    pub fn new(row: u32, column: u32) -> Self {
+        State {
+            row,
+            column,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn state_new() {
+        let state = State::new(10, 25);
+        assert_eq!(10, state.row);
+        assert_eq!(25, state.column);
+    }
+
+    #[test]
+    fn state_equals() {
+        let state_a = State::new(10, 25);
+        let state_b = State::new(10, 25);
+        assert!(state_a == state_b);
+    }
+
+    #[test]
+    fn state_unequal() {
+        let state_a = State::new(10, 25);
+        let state_b = State::new(25, 10);
+        assert!(state_a != state_b);
+    }
+}
