@@ -47,6 +47,26 @@ impl BreathFirstSearch {
 
         None
     }
+    pub fn search_vec(&mut self, problem: &Problem) -> Vec<u8> {
+        let mut result = vec![0; (problem.graph.width * problem.graph.height) as usize];
+        let mut search = self.search(problem);
+
+        while let Some(node) = search {
+            let index = problem.graph.get_index(node.state.row, node.state.column);
+            result[index] = 1;
+
+            match node.parent {
+                Some(parent) => {
+                    search = Some(*parent.clone());
+                }
+                None => {
+                    search = None;
+                }
+            }
+        }
+
+        result
+    }
     pub fn should_add_node(&self, node: &Node) -> bool {
         self.explored.iter().any(|x| x == node) == false && self.frontier.iter().any(|x| x == node) == false
     }
@@ -134,5 +154,29 @@ mod tests {
         let node_c = Node::new(State::new(1, 2), Some(Box::new(node_b.clone())));
 
         assert_eq!(breath_first_search.search(&problem), Some(node_c));
+    }
+
+    #[test]
+    fn search_vec_with_valid_solution_returns_vec_with_solution() {
+        let mut breath_first_search = BreathFirstSearch::new();
+
+        let start = State::new(0, 1);
+        let goal = State::new(1, 2);
+        let graph = Graph::new(vec![
+            2, 1, 2, 2,
+            2, 1, 1, 2,
+            2, 2, 2, 2,
+            2, 2, 2, 2,
+        ], 4, 4);
+        let problem = Problem::new(start, goal, graph);
+
+        let result = vec![
+            0, 1, 0, 0,
+            0, 1, 1, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+        ];
+
+        assert_eq!(breath_first_search.search_vec(&problem), result);
     }
 }

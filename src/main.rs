@@ -22,7 +22,7 @@ fn main() {
     let problem = Problem::new(start, goal, graph);
 
     let mut breath_first_search = BreathFirstSearch::new();
-    let result = breath_first_search.search(&problem);
+    let result = breath_first_search.search_vec(&problem);
 
     println!("{:?}", result);
 }
