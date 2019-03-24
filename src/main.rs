@@ -1,10 +1,12 @@
 mod state;
 mod node;
 mod problem;
+mod breath_first_search;
 
 use state::State;
 use node::Node;
 use problem::Problem;
+use breath_first_search::BreathFirstSearch;
 
 fn main() {
     let start = State::new(1, 1);
@@ -22,4 +24,7 @@ fn main() {
     println!("{:?}", node_11);
     println!("{:?}", node_12);
     println!("{:?}", node_13);
+
+    let mut breath_first_search = BreathFirstSearch::new();
+    breath_first_search.search(&problem);
 }

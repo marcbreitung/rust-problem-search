@@ -17,17 +17,23 @@ impl BreathFirstSearch {
         }
     }
 
-    pub fn search(&mut self, problem: Problem) -> Result<Node, io::Error> {
+    pub fn search(&mut self, problem: &Problem) -> Option<Node> {
         self.frontier = VecDeque::new();
         self.explored = VecDeque::new();
 
         let initial = problem.get_initial();
 
         if problem.goal_test(&initial) {
-            return Result(initial);
+            return Some(initial);
         }
 
         self.frontier.push_back(initial);
+
+        let node = self.frontier.pop_front();
+
+        if let Some(node) = node {
+            println!("{:?}", node);
+        }
 
         None
     }
@@ -40,30 +46,30 @@ mod tests {
 
     #[test]
     fn new_returns_new_breath_first_search() {
-        let search = BreathFirstSearch::new();
+        let mut breath_first_search = BreathFirstSearch::new();
 
-        assert_eq!(search.frontier.pop_front(), None);
-        assert_eq!(search.explored.pop_front(), None);
+        assert_eq!(breath_first_search.frontier.pop_front(), None);
+        assert_eq!(breath_first_search.explored.pop_front(), None);
     }
 
     #[test]
     fn search_start_is_goal_returns_start_as_result() {
-        let state = BreathFirstSearch::new();
+        let mut breath_first_search = BreathFirstSearch::new();
         let start = State::new(1, 1);
         let goal = State::new(1, 1);
         let problem = Problem::new(start, goal);
         let result = Node::new(State::new(1, 1), None);
 
-        assert_eq!(problem.search(problem), Some(result));
+        assert_eq!(breath_first_search.search(&problem), Some(result));
     }
 
     #[test]
     fn search_no_solution_exits_returns_none() {
-        let state = BreathFirstSearch::new();
+        let mut breath_first_search = BreathFirstSearch::new();
         let start = State::new(1, 1);
         let goal = State::new(5, 5);
         let problem = Problem::new(start, goal);
 
-        assert_eq!(problem.search(problem), None);
+        assert_eq!(breath_first_search.search(&problem), None);
     }
 }
