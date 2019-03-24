@@ -1,7 +1,6 @@
 use std::collections::VecDeque;
 
 use crate::node::Node;
-use crate::state::State;
 use crate::problem::Problem;
 
 pub struct BreathFirstSearch {
@@ -32,7 +31,7 @@ impl BreathFirstSearch {
         let node = self.frontier.pop_front();
 
         if let Some(node) = node {
-            println!("{:?}", node);
+            println!("node: {:?}", node);
         }
 
         None
