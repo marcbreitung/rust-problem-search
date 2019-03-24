@@ -42,6 +42,7 @@ impl BreathFirstSearch {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::state::State;
 
     #[test]
     fn new_returns_new_breath_first_search() {
