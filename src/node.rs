@@ -20,9 +20,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn node_new() {
+    fn new_returns_new_node() {
         let state = State::new(10, 25);
         let node = Node::new(state, None);
+
         assert_eq!(State::new(10, 25), node.state);
         assert_eq!(None, node.parent);
     }

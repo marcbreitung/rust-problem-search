@@ -18,23 +18,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn state_new() {
+    fn new_returns_new_state() {
         let state = State::new(10, 25);
+
         assert_eq!(10, state.row);
         assert_eq!(25, state.column);
     }
 
     #[test]
-    fn state_equals() {
+    fn equals_two_states_are_equal_returns_true() {
         let state_a = State::new(10, 25);
         let state_b = State::new(10, 25);
+
         assert!(state_a == state_b);
     }
 
     #[test]
-    fn state_unequal() {
+    fn equals_two_states_are_state_unequal_returns_true() {
         let state_a = State::new(10, 25);
         let state_b = State::new(25, 10);
+
         assert!(state_a != state_b);
     }
 }
