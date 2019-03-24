@@ -17,7 +17,14 @@ impl Graph {
     pub fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
     }
-
+    pub fn get_value(&self, index: usize) -> Option<u8> {
+        let mut result = None;
+        let value = self.nodes.get(index);
+        if let Some(value) = value {
+            result = Some(*value);
+        }
+        result
+    }
     pub fn get_neighbours(&self, row: u32, column: u32) -> Vec<State> {
         let mut result = vec![];
         let rows = vec![row as i32 - 1, row as i32, row as i32 + 1, row as i32];
@@ -62,6 +69,18 @@ mod tests {
         let graph = Graph::new(nodes, 3, 3);
 
         assert_eq!(graph.get_index(1, 1), 4);
+    }
+
+    #[test]
+    fn get_value_with_index_returns_value() {
+        let nodes: Vec<u8> = vec![
+            1, 1, 2,
+            2, 3, 2,
+            2, 1, 2,
+        ];
+        let graph = Graph::new(nodes, 3, 3);
+
+        assert_eq!(graph.get_value(4), Some(3));
     }
 
     #[test]

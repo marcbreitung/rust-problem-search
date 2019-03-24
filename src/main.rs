@@ -12,7 +12,8 @@ use breath_first_search::BreathFirstSearch;
 fn main() {
     let start = State::new(1, 1);
     let goal = State::new(5, 5);
-    let problem = Problem::new(start, goal);
+    let graph = Graph::new(vec![1, 1, 1, 1], 2, 2);
+    let problem = Problem::new(start, goal, graph);
 
     let mut breath_first_search = BreathFirstSearch::new();
     breath_first_search.search(&problem);

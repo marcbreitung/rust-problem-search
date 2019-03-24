@@ -15,7 +15,6 @@ impl BreathFirstSearch {
             explored: VecDeque::new(),
         }
     }
-
     pub fn search(&mut self, problem: &Problem) -> Option<Node> {
         self.frontier = VecDeque::new();
         self.explored = VecDeque::new();
@@ -31,18 +30,34 @@ impl BreathFirstSearch {
         let node = self.frontier.pop_front();
 
         if let Some(node) = node {
-            println!("node: {:?}", node);
+            let actions = problem.get_actions(&node.state);
+
+            for action in actions {
+                let child = Node::new(action, Some(Box::new(node.clone())));
+
+                if self.should_add_node(&child) {
+                    if problem.goal_test(&child) {
+                        return Some(child);
+                    } else {
+                        self.frontier.push_back(child);
+                        //println!("frontier: {:?}", self.frontier);
+                    }
+                }
+            }
         }
 
         None
     }
+    pub fn should_add_node(&self, node: &Node) -> bool {
+        self.explored.iter().any(|x| x == node) == false && self.frontier.iter().any(|x| x == node) == false
+    }
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::state::State;
+    use crate::graph::Graph;
 
     #[test]
     fn new_returns_new_breath_first_search() {
@@ -55,9 +70,12 @@ mod tests {
     #[test]
     fn search_start_is_goal_returns_start_as_result() {
         let mut breath_first_search = BreathFirstSearch::new();
+
         let start = State::new(1, 1);
         let goal = State::new(1, 1);
-        let problem = Problem::new(start, goal);
+        let graph = Graph::new(vec![1, 1, 1, 1], 2, 2);
+        let problem = Problem::new(start, goal, graph);
+
         let result = Node::new(State::new(1, 1), None);
 
         assert_eq!(breath_first_search.search(&problem), Some(result));
@@ -66,10 +84,35 @@ mod tests {
     #[test]
     fn search_no_solution_exits_returns_none() {
         let mut breath_first_search = BreathFirstSearch::new();
+
         let start = State::new(1, 1);
         let goal = State::new(5, 5);
-        let problem = Problem::new(start, goal);
+        let graph = Graph::new(vec![1, 1, 1, 1], 2, 2);
+        let problem = Problem::new(start, goal, graph);
 
         assert_eq!(breath_first_search.search(&problem), None);
+    }
+
+    #[test]
+    fn should_add_node_with_non_existing_node_returns_true() {
+        let breath_first_search = BreathFirstSearch::new();
+        let node = Node::new(State::new(5, 5), None);
+        assert!(breath_first_search.should_add_node(&node));
+    }
+
+    #[test]
+    fn should_add_node_with_existing_node_in_frontier_returns_false() {
+        let mut breath_first_search = BreathFirstSearch::new();
+        breath_first_search.frontier.push_back(Node::new(State::new(5, 5), None));
+        let node = Node::new(State::new(5, 5), None);
+        assert!(!breath_first_search.should_add_node(&node));
+    }
+
+    #[test]
+    fn should_add_node_with_existing_node_in_explored_returns_false() {
+        let mut breath_first_search = BreathFirstSearch::new();
+        breath_first_search.explored.push_back(Node::new(State::new(5, 5), None));
+        let node = Node::new(State::new(5, 5), None);
+        assert!(!breath_first_search.should_add_node(&node));
     }
 }
