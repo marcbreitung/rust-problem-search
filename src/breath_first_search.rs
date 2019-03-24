@@ -120,10 +120,10 @@ mod tests {
         let mut breath_first_search = BreathFirstSearch::new();
 
         let start = State::new(0, 1);
-        let goal = State::new(1, 1);
+        let goal = State::new(1, 2);
         let graph = Graph::new(vec![
             2, 1, 2, 2,
-            2, 1, 2, 2,
+            2, 1, 1, 2,
             2, 2, 2, 2,
             2, 2, 2, 2,
         ], 4, 4);
@@ -131,7 +131,8 @@ mod tests {
 
         let node_a = Node::new(State::new(0, 1), None);
         let node_b = Node::new(State::new(1, 1), Some(Box::new(node_a.clone())));
+        let node_c = Node::new(State::new(1, 2), Some(Box::new(node_b.clone())));
 
-        assert_eq!(breath_first_search.search(&problem), Some(node_b));
+        assert_eq!(breath_first_search.search(&problem), Some(node_c));
     }
 }
