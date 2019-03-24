@@ -11,21 +11,18 @@ use breath_first_search::BreathFirstSearch;
 
 fn main() {
     let start = State::new(1, 1);
-    let goal = State::new(5, 5);
-    let graph = Graph::new(vec![1, 1, 1, 1], 2, 2);
+    let goal = State::new(4, 4);
+    let graph = Graph::new(vec![
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 2,
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1,
+    ], 5, 5);
     let problem = Problem::new(start, goal, graph);
 
     let mut breath_first_search = BreathFirstSearch::new();
-    breath_first_search.search(&problem);
+    let result = breath_first_search.search(&problem);
 
-    let nodes: Vec<u8> = vec![
-        1, 1, 2,
-        2, 1, 2,
-        2, 1, 2,
-    ];
-
-    let graph = Graph::new(nodes, 3, 3);
-    let n = graph.get_neighbours(1, 1);
-
-    println!("{:?}", n);
+    println!("{:?}", result);
 }

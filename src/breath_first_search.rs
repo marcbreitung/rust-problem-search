@@ -27,9 +27,9 @@ impl BreathFirstSearch {
 
         self.frontier.push_back(initial);
 
-        let node = self.frontier.pop_front();
+        while let Some(node) = self.frontier.pop_front() {
+            self.explored.push_back(node.clone());
 
-        if let Some(node) = node {
             let actions = problem.get_actions(&node.state);
 
             for action in actions {
@@ -40,7 +40,6 @@ impl BreathFirstSearch {
                         return Some(child);
                     } else {
                         self.frontier.push_back(child);
-                        //println!("frontier: {:?}", self.frontier);
                     }
                 }
             }
@@ -114,5 +113,25 @@ mod tests {
         breath_first_search.explored.push_back(Node::new(State::new(5, 5), None));
         let node = Node::new(State::new(5, 5), None);
         assert!(!breath_first_search.should_add_node(&node));
+    }
+
+    #[test]
+    fn search_with_valid_solution_returns_option_with_solution() {
+        let mut breath_first_search = BreathFirstSearch::new();
+
+        let start = State::new(0, 1);
+        let goal = State::new(1, 1);
+        let graph = Graph::new(vec![
+            2, 1, 2, 2,
+            2, 1, 2, 2,
+            2, 2, 2, 2,
+            2, 2, 2, 2,
+        ], 4, 4);
+        let problem = Problem::new(start, goal, graph);
+
+        let node_a = Node::new(State::new(0, 1), None);
+        let node_b = Node::new(State::new(1, 1), Some(Box::new(node_a.clone())));
+
+        assert_eq!(breath_first_search.search(&problem), Some(node_b));
     }
 }
