@@ -1,10 +1,25 @@
 #[derive(Debug, Clone, PartialEq)]
+/// A state inside the problem, represented by row and column
 pub struct State {
     pub row: u32,
     pub column: u32,
 }
 
 impl State {
+    /// Returns a new state with the given row and column
+    ///
+    /// # Arguments
+    ///
+    /// * `row` - A u32 defines the row
+    /// * `column` - A u32 defines the column
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use crate::rust_problem_search::state::State;
+    ///
+    /// let state = State::new(10, 25);
+    /// ```
     pub fn new(row: u32, column: u32) -> Self {
         State {
             row,

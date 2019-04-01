@@ -1,12 +1,29 @@
 use crate::state::State;
 
 #[derive(Debug, Clone)]
+/// A node inside the breath first search
 pub struct Node {
     pub state: State,
     pub parent: Option<Box<Node>>,
 }
 
 impl Node {
+    /// Returns a new node with the given state and the parent node
+    ///
+    /// # Arguments
+    ///
+    /// * `state` - A State defines the nodes state
+    /// * `parent` - A Option<Box<Node>> defines the parent node
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use crate::rust_problem_search::state::State;
+    /// use crate::rust_problem_search::node::Node;
+    ///
+    /// let state = State::new(10, 25);
+    /// let node = Node::new(state, None);
+    /// ```
     pub fn new(state: State, parent: Option<Box<Node>>) -> Self {
         Node {
             state,

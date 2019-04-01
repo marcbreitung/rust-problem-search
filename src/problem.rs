@@ -2,6 +2,7 @@ use crate::state::State;
 use crate::node::Node;
 use crate::graph::Graph;
 
+/// Defines the structure the execute the search
 pub struct Problem {
     pub start: State,
     pub goal: State,
@@ -9,6 +10,27 @@ pub struct Problem {
 }
 
 impl Problem {
+    /// Returns a new problem with the given start state, goal state and the graph
+    ///
+    /// # Arguments
+    ///
+    ///  * `start` - A State which defines the search starting point
+    ///  * `goal` - A State which defines the search goal
+    ///  * `graph` - A Graph which defines the searchable structure
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use crate::rust_problem_search::state::State;
+    /// use crate::rust_problem_search::node::Node;
+    /// use crate::rust_problem_search::graph::Graph;
+    /// use crate::rust_problem_search::problem::Problem;
+    ///
+    /// let start = State::new(1, 1);
+    /// let goal = State::new(5, 5);
+    /// let graph = Graph::new(vec![1, 1, 1, 1], 2, 2);
+    /// let problem = Problem::new(start, goal, graph);
+    /// ```
     pub fn new(start: State, goal: State, graph: Graph) -> Self {
         Problem {
             start,
