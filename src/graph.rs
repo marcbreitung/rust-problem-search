@@ -40,9 +40,9 @@ impl Graph {
 
         result
     }
-    pub fn get_state_at_index(&self, index: u32) -> State {
-        let row = index / self.width;
-        let col = index - (self.width * row);
+    pub fn get_state_at_index(&self, index: usize) -> State {
+        let row = index as u32 / self.width;
+        let col = index as u32 - (self.width * row);
         State::new(row, col)
     }
 }

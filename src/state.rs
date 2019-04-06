@@ -1,3 +1,5 @@
+use std::cmp;
+
 #[derive(Debug, Clone, PartialEq)]
 /// A state inside the problem, represented by row and column
 pub struct State {
@@ -26,6 +28,28 @@ impl State {
             column,
         }
     }
+
+    /// Returns the manhattan distance between two states
+    ///
+    /// # Arguments
+    ///
+    /// * `state` - a state
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use crate::rust_problem_search::state::State;
+    ///
+    /// let state_a = State::new(5, 3);
+    /// let state_b = State::new(2, 7);
+    ///
+    /// state_b.distance(&state_a);
+    /// ```
+    pub fn distance(&self, state: &State) -> u32 {
+        let row = cmp::max(self.row, state.row) - cmp::min(self.row, state.row);
+        let column = cmp::max(self.column, state.column) - cmp::min(self.column, state.column);
+        cmp::max(row, column) + cmp::min(row, column)
+    }
 }
 
 #[cfg(test)]
@@ -45,7 +69,7 @@ mod tests {
         let state_a = State::new(10, 25);
         let state_b = State::new(10, 25);
 
-        assert!(state_a == state_b);
+        assert_eq!(state_a, state_b);
     }
 
     #[test]
@@ -53,6 +77,14 @@ mod tests {
         let state_a = State::new(10, 25);
         let state_b = State::new(25, 10);
 
-        assert!(state_a != state_b);
+        assert_ne!(state_a, state_b);
+    }
+
+    #[test]
+    fn distance_returns_manhattan_distance() {
+        let state_a = State::new(5, 3);
+        let state_b = State::new(2, 7);
+
+        assert_eq!(7, state_b.distance(&state_a));
     }
 }
