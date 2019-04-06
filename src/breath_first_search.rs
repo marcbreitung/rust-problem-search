@@ -47,25 +47,30 @@ impl BreathFirstSearch {
 
         None
     }
-    pub fn search_vec(&mut self, problem: &Problem) -> Vec<u8> {
-        let mut result = vec![0; (problem.graph.width * problem.graph.height) as usize];
+    pub fn search_vec(&mut self, problem: &Problem) -> Option<Vec<u8>> {
         let mut search = self.search(problem);
 
-        while let Some(node) = search {
-            let index = problem.graph.get_index(node.state.row, node.state.column);
-            result[index] = 1;
+        if search == None {
+            None
+        } else {
+            let mut result = vec![0; (problem.graph.width * problem.graph.height) as usize];
 
-            match node.parent {
-                Some(parent) => {
-                    search = Some(*parent.clone());
-                }
-                None => {
-                    search = None;
+            while let Some(node) = search {
+                let index = problem.graph.get_index(node.state.row, node.state.column);
+                result[index] = 1;
+
+                match node.parent {
+                    Some(parent) => {
+                        search = Some(*parent.clone());
+                    }
+                    None => {
+                        search = None;
+                    }
                 }
             }
-        }
 
-        result
+            Some(result)
+        }
     }
     pub fn should_add_node(&self, node: &Node) -> bool {
         self.explored.iter().any(|x| x == node) == false && self.frontier.iter().any(|x| x == node) == false
@@ -177,7 +182,7 @@ mod tests {
             0, 0, 0, 0,
         ];
 
-        assert_eq!(breath_first_search.search_vec(&problem), result);
+        assert_eq!(breath_first_search.search_vec(&problem), Some(result));
     }
 
     #[test]
@@ -229,6 +234,6 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         ];
 
-        assert_eq!(breath_first_search.search_vec(&problem), result);
+        assert_eq!(breath_first_search.search_vec(&problem), Some(result));
     }
 }
