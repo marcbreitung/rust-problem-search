@@ -1,6 +1,6 @@
 [package]
 name = "rust-problem-search"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Marc Breitung"]
 edition = "2018"
 

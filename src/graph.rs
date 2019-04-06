@@ -1,5 +1,6 @@
 use crate::state::State;
 
+/// The graph represents the problem structure
 pub struct Graph {
     pub width: u32,
     pub height: u32,
@@ -7,6 +8,26 @@ pub struct Graph {
 }
 
 impl Graph {
+    /// Returns a new graph with the given width and height
+    ///
+    /// # Arguments
+    ///
+    /// * `nodes` - a Vec<u8> with the type for each tile
+    /// * `width` - the number of horizontal tiles
+    /// * `height` - the number of vertical tiles
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use crate::rust_problem_search::graph::Graph;
+    ///
+    /// let graph = Graph::new(vec![
+    ///     1, 1, 1, 1,
+    ///     1, 1, 1, 1,
+    ///     1, 1, 1, 1,
+    ///     1, 1, 1, 1
+    /// ] , 4, 4);
+    /// ```
     pub fn new(nodes: Vec<u8>, width: u32, height: u32) -> Self {
         Graph {
             nodes,
@@ -14,6 +35,7 @@ impl Graph {
             height,
         }
     }
+
     pub fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
     }
