@@ -38,12 +38,18 @@ impl Problem {
             graph,
         }
     }
+
+    /// Checks if the given state is the goal
     pub fn goal_test(&self, node: &Node) -> bool {
         self.goal == node.state
     }
+
+    /// Returns the initial state
     pub fn get_initial(&self) -> Node {
         Node::new(self.start.clone(), None)
     }
+
+    /// Returns all possible actions by the given state
     pub fn get_actions(&self, state: &State) -> Vec<State> {
         let mut result = vec![];
         let neighbours = self.graph.get_neighbours(state.row, state.column);
@@ -57,6 +63,23 @@ impl Problem {
             }
         }
         result
+    }
+
+    /// Returns the state with the closest distance to the goal
+    pub fn get_closest(&self) -> State {
+        let mut closest = self.start.clone();
+
+        for (index, value) in self.graph.nodes.iter().enumerate() {
+            if *value == 1 {
+                let state = self.graph.get_state_at_index(index);
+
+                if self.goal.distance(&state) < self.goal.distance(&closest) {
+                    closest = state;
+                }
+            }
+        }
+
+        closest
     }
 }
 
@@ -137,5 +160,22 @@ mod tests {
         ];
 
         assert_eq!(problem.get_actions(&state), result);
+    }
+
+    #[test]
+    fn get_closest_returns_closest_state_to_goal() {
+        let start = State::new(0, 1);
+        let goal = State::new(3, 3);
+        let graph = Graph::new(vec![
+            2, 1, 2, 2,
+            2, 1, 1, 1,
+            2, 1, 2, 2,
+            2, 2, 2, 2,
+        ], 4, 4);
+        let problem = Problem::new(start, goal, graph);
+
+        let closest = State::new(1, 3);
+
+        assert_eq!(problem.get_closest(), closest);
     }
 }

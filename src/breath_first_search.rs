@@ -231,5 +231,4 @@ mod tests {
 
         assert_eq!(breath_first_search.search_vec(&problem), result);
     }
-
 }
