@@ -40,6 +40,11 @@ impl Graph {
 
         result
     }
+    pub fn get_state_at_index(&self, index: u32) -> State {
+        let row = index / self.width;
+        let col = index - (self.width * row);
+        State::new(row, col)
+    }
 }
 
 #[cfg(test)]
@@ -134,5 +139,19 @@ mod tests {
         ];
 
         assert_eq!(graph.get_neighbours(2, 2), result);
+    }
+
+    #[test]
+    fn get_state_at_index_with_index_returns_state() {
+        let nodes: Vec<u8> = vec![
+            1, 1, 2,
+            2, 1, 2,
+            2, 1, 2,
+        ];
+        let graph = Graph::new(nodes, 3, 3);
+
+        let state = State::new(1, 2);
+
+        assert_eq!(graph.get_state_at_index(5), state);
     }
 }
