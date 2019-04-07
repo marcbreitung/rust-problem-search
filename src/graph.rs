@@ -36,9 +36,12 @@ impl Graph {
         }
     }
 
+    /// Returns the index of the elements at the given row and column
     pub fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
     }
+
+    /// Returns the value at the given index as Option
     pub fn get_value(&self, index: usize) -> Option<u8> {
         let mut result = None;
         let value = self.nodes.get(index);
@@ -47,6 +50,8 @@ impl Graph {
         }
         result
     }
+
+    /// Returns a vec with all neighbours at the given row and column
     pub fn get_neighbours(&self, row: u32, column: u32) -> Vec<State> {
         let mut result = vec![];
         let rows = vec![row as i32 - 1, row as i32, row as i32 + 1, row as i32];
@@ -62,6 +67,8 @@ impl Graph {
 
         result
     }
+
+    /// Returns the state ath the given index
     pub fn get_state_at_index(&self, index: usize) -> State {
         let row = index as u32 / self.width;
         let col = index as u32 - (self.width * row);
