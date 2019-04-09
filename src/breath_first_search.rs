@@ -2,6 +2,14 @@ use std::collections::VecDeque;
 
 use crate::node::Node;
 use crate::problem::Problem;
+use crate::state::State;
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Solution {
+    None,
+    Path(Vec<u8>),
+    Closest(State),
+}
 
 pub struct BreathFirstSearch {
     pub frontier: VecDeque<Node>,
@@ -47,11 +55,12 @@ impl BreathFirstSearch {
 
         None
     }
-    pub fn search_vec(&mut self, problem: &Problem) -> Option<Vec<u8>> {
+    pub fn search_vec(&mut self, problem: &Problem) -> Solution {
         let mut search = self.search(problem);
 
         if search == None {
-            None
+            let closets = problem.get_closest();
+            Solution::Closest(closets)
         } else {
             let mut result = vec![0; (problem.graph.width * problem.graph.height) as usize];
 
@@ -69,7 +78,7 @@ impl BreathFirstSearch {
                 }
             }
 
-            Some(result)
+            Solution::Path(result)
         }
     }
     pub fn should_add_node(&self, node: &Node) -> bool {
@@ -182,7 +191,7 @@ mod tests {
             0, 0, 0, 0,
         ];
 
-        assert_eq!(breath_first_search.search_vec(&problem), Some(result));
+        assert_eq!(breath_first_search.search_vec(&problem), Solution::Path(result));
     }
 
     #[test]
@@ -234,6 +243,25 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         ];
 
-        assert_eq!(breath_first_search.search_vec(&problem), Some(result));
+        assert_eq!(breath_first_search.search_vec(&problem), Solution::Path(result));
+    }
+
+    #[test]
+    fn search_vec_large_without_valid_solution_returns_closets_state() {
+        let mut breath_first_search = BreathFirstSearch::new();
+
+        let start = State::new(0, 1);
+        let goal = State::new(3, 3);
+        let graph = Graph::new(vec![
+            2, 1, 2, 2,
+            2, 1, 1, 2,
+            2, 2, 2, 2,
+            2, 2, 2, 2,
+        ], 4, 4);
+        let problem = Problem::new(start, goal, graph);
+
+        let closets = State::new(1, 2);
+
+        assert_eq!(breath_first_search.search_vec(&problem), Solution::Closest(closets));
     }
 }
