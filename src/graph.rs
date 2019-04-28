@@ -74,6 +74,22 @@ impl Graph {
         let col = index as u32 - (self.width * row);
         State::new(row, col)
     }
+
+    /// Returns all states with the given value
+    pub fn get_states_with_value(&self, value: u8) -> Vec<State> {
+        let mut states = vec![];
+
+        for (index, _) in self.nodes.iter().enumerate() {
+            if let Some(v) = self.get_value(index) {
+                if v == value {
+                    let state = self.get_state_at_index(index);
+                    states.push(state)
+                }
+            }
+        }
+
+        states
+    }
 }
 
 #[cfg(test)]
@@ -182,5 +198,22 @@ mod tests {
         let state = State::new(1, 2);
 
         assert_eq!(graph.get_state_at_index(5), state);
+    }
+
+    #[test]
+    fn get_states_with_value_with_value_one_returns_states_with_the_given_value() {
+        let nodes: Vec<u8> = vec![
+            2, 2, 2,
+            2, 1, 2,
+            2, 1, 2,
+        ];
+        let graph = Graph::new(nodes, 3, 3);
+
+        let state_a = State::new(1, 1);
+        let state_b = State::new(2, 1);
+
+        let states = vec![state_a, state_b];
+
+        assert_eq!(graph.get_states_with_value(1), states);
     }
 }
