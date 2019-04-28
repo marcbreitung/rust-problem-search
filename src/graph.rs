@@ -51,6 +51,12 @@ impl Graph {
         result
     }
 
+    /// Returns the value at the given state
+    pub fn get_value_at_state(&self, state: &State) -> Option<u8> {
+        let index = self.get_index(state.row, state.column);
+        self.get_value(index)
+    }
+
     /// Returns a vec with all neighbours at the given row and column
     pub fn get_neighbours(&self, row: u32, column: u32) -> Vec<State> {
         let mut result = vec![];
@@ -90,6 +96,29 @@ impl Graph {
 
         states
     }
+
+    /// Returns all states at the end of a path
+    pub fn get_end_states(&self) -> Vec<State> {
+        let mut result = vec![];
+        let path_states = self.get_states_with_value(1);
+
+        for state in path_states {
+            let neighbours = self.get_neighbours(state.row, state.column);
+
+            for neighbour in neighbours {
+                let neighbour_value = self.get_value_at_state(&neighbour);
+
+                match neighbour_value {
+                    Some(v) if v == 0 => {
+                        result.push(state.clone());
+                    }
+                    _ => {}
+                }
+            }
+        }
+
+        result
+    }
 }
 
 #[cfg(test)]
@@ -123,6 +152,19 @@ mod tests {
 
     #[test]
     fn get_value_with_index_returns_value() {
+        let nodes: Vec<u8> = vec![
+            1, 1, 2,
+            2, 3, 2,
+            2, 1, 2,
+        ];
+        let graph = Graph::new(nodes, 3, 3);
+        let state = State::new(1, 1);
+
+        assert_eq!(graph.get_value_at_state(&state), Some(3));
+    }
+
+    #[test]
+    fn get_value_at_state_with_state_returns_value() {
         let nodes: Vec<u8> = vec![
             1, 1, 2,
             2, 3, 2,
@@ -215,5 +257,26 @@ mod tests {
         let states = vec![state_a, state_b];
 
         assert_eq!(graph.get_states_with_value(1), states);
+    }
+
+    #[test]
+    fn get_end_states_returns_end_states() {
+        let nodes: Vec<u8> = vec![
+            2, 2, 2, 0, 0, 0,
+            2, 1, 1, 0, 0, 0,
+            2, 1, 2, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+        ];
+
+        let graph = Graph::new(nodes, 6, 6);
+
+        let state_a = State::new(1, 2);
+        let state_b = State::new(2, 1);
+
+        let ends = vec![state_a, state_b];
+
+        assert_eq!(graph.get_end_states(), ends);
     }
 }
