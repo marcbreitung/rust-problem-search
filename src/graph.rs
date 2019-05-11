@@ -37,6 +37,27 @@ impl Graph {
     }
 
     /// Returns the index of the elements at the given row and column
+    ///
+    /// # Arguments
+    ///
+    /// * `row` - the row index
+    /// * `column` - the column index
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use crate::rust_problem_search::graph::Graph;
+    ///
+    /// let graph = Graph::new(vec![
+    ///     1, 1, 1, 1,
+    ///     1, 1, 1, 1,
+    ///     1, 1, 1, 1,
+    ///     1, 1, 1, 1
+    /// ] , 4, 4);
+    ///
+    /// graph.get_index(1, 3);
+    ///
+    /// ```
     pub fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
     }

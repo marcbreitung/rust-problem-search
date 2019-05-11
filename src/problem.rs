@@ -68,14 +68,9 @@ impl Problem {
     /// Returns the state with the closest distance to the goal
     pub fn get_closest(&self) -> State {
         let mut closest = self.start.clone();
-
-        for (index, value) in self.graph.nodes.iter().enumerate() {
-            if *value == 1 {
-                let state = self.graph.get_state_at_index(index);
-
-                if self.goal.distance(&state) < self.goal.distance(&closest) {
-                    closest = state;
-                }
+        for (index, state) in self.graph.get_end_states().iter().enumerate() {
+            if self.goal.distance(state) < self.goal.distance(&closest) {
+                closest = state.clone();
             }
         }
 
@@ -167,11 +162,12 @@ mod tests {
         let start = State::new(0, 1);
         let goal = State::new(3, 3);
         let graph = Graph::new(vec![
-            2, 1, 2, 2,
-            2, 1, 1, 1,
-            2, 1, 2, 2,
-            2, 2, 2, 2,
-        ], 4, 4);
+            2, 1, 2, 2, 0,
+            2, 1, 1, 1, 0,
+            2, 1, 2, 2, 0,
+            2, 2, 2, 2, 0,
+            0, 0, 0, 0, 0,
+        ], 5, 5);
         let problem = Problem::new(start, goal, graph);
 
         let closest = State::new(1, 3);

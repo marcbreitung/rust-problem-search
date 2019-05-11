@@ -247,17 +247,19 @@ mod tests {
     }
 
     #[test]
-    fn search_vec_large_without_valid_solution_returns_closets_state() {
+    fn search_vec_without_valid_solution_returns_closets_state() {
         let mut breath_first_search = BreathFirstSearch::new();
 
         let start = State::new(0, 1);
         let goal = State::new(3, 3);
         let graph = Graph::new(vec![
-            2, 1, 2, 2,
-            2, 1, 1, 2,
-            2, 2, 2, 2,
-            2, 2, 2, 2,
-        ], 4, 4);
+            2, 1, 2, 0, 0, 0,
+            2, 1, 1, 0, 0, 0,
+            2, 2, 2, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+        ], 6, 6);
         let problem = Problem::new(start, goal, graph);
 
         let closets = State::new(1, 2);
