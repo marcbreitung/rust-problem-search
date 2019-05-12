@@ -68,7 +68,7 @@ impl Problem {
     /// Returns the state with the closest distance to the goal
     pub fn get_closest(&self) -> State {
         let mut closest = self.start.clone();
-        for (state) in self.graph.get_end_states().iter() {
+        for state in self.graph.get_end_states().iter() {
             if self.goal.distance(state) < self.goal.distance(&closest) {
                 closest = state.clone();
             }

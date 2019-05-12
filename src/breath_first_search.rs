@@ -2,13 +2,11 @@ use std::collections::VecDeque;
 
 use crate::node::Node;
 use crate::problem::Problem;
-use crate::state::State;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Solution {
     None,
-    Path(Vec<u8>),
-    Closest(State),
+    Path(Vec<u8>)
 }
 
 pub struct BreathFirstSearch {
