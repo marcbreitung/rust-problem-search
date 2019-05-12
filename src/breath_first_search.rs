@@ -59,8 +59,7 @@ impl BreathFirstSearch {
         let mut search = self.search(problem);
 
         if search == None {
-            let closets = problem.get_closest();
-            Solution::Closest(closets)
+            Solution::None
         } else {
             let mut result = vec![0; (problem.graph.width * problem.graph.height) as usize];
 
@@ -247,7 +246,7 @@ mod tests {
     }
 
     #[test]
-    fn search_vec_without_valid_solution_returns_closets_state() {
+    fn search_vec_without_valid_solution_returns_none() {
         let mut breath_first_search = BreathFirstSearch::new();
 
         let start = State::new(0, 1);
@@ -262,8 +261,6 @@ mod tests {
         ], 6, 6);
         let problem = Problem::new(start, goal, graph);
 
-        let closets = State::new(1, 2);
-
-        assert_eq!(breath_first_search.search_vec(&problem), Solution::Closest(closets));
+        assert_eq!(breath_first_search.search_vec(&problem), Solution::None);
     }
 }
