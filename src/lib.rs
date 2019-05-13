@@ -1,5 +1,5 @@
-pub mod graph;
-pub mod state;
+pub mod tile;
+pub mod position;
 pub mod node;
-pub mod problem;
+pub mod graph;
 pub mod breath_first_search;

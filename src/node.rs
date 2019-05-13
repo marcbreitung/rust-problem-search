@@ -1,40 +1,40 @@
-use crate::state::State;
+use crate::position::Position;
+use crate::tile::Tile;
 
-#[derive(Debug, Clone)]
-/// A node inside the breath first search
+#[derive(Hash, Eq, PartialEq, Debug, Clone)]
+/// Defines a node inside the graph
 pub struct Node {
-    pub state: State,
-    pub parent: Option<Box<Node>>,
+    pub position: Position,
+    pub value: Tile,
+    pub neighbours: Vec<String>,
 }
 
 impl Node {
-    /// Returns a new node with the given state and the parent node
+    /// Returns a new Position
     ///
     /// # Arguments
     ///
-    /// * `state` - A State defines the nodes state
-    /// * `parent` - A Option<Box<Node>> defines the parent node
+    /// * `position` - A Position defines the position
+    /// * `value` - A Tile defines typ3 of this node
+    /// * `neighbours` - A Vec<String> with the connected node keys
     ///
     /// # Example
     ///
     /// ```
-    /// use crate::rust_problem_search::state::State;
+    /// use crate::rust_problem_search::position::Position;
     /// use crate::rust_problem_search::node::Node;
+    /// use crate::rust_problem_search::tile::Tile;
     ///
-    /// let state = State::new(10, 25);
-    /// let node = Node::new(state, None);
+    /// let position = Position::new(1, 0);
+    /// let neighbours: Vec<String> = vec![];
+    /// let node = Node::new(position, Tile::Path, Vec::new());
     /// ```
-    pub fn new(state: State, parent: Option<Box<Node>>) -> Self {
+    pub fn new(position: Position, value: Tile, neighbours: Vec<String>) -> Self {
         Node {
-            state,
-            parent,
+            position,
+            value,
+            neighbours,
         }
-    }
-}
-
-impl PartialEq for Node {
-    fn eq(&self, other: &Node) -> bool {
-        self.state.row == other.state.row && self.state.column == other.state.column
     }
 }
 
@@ -44,32 +44,12 @@ mod tests {
 
     #[test]
     fn new_returns_new_node() {
-        let state = State::new(10, 25);
-        let node = Node::new(state, None);
+        let position = Position::new(1, 0);
+        let neighbours: Vec<String> = vec![];
+        let node = Node::new(position, Tile::Path, Vec::new());
 
-        assert_eq!(State::new(10, 25), node.state);
-        assert_eq!(None, node.parent);
-    }
-
-    #[test]
-    fn equals_equal_nodes_return_true() {
-        let state_a = State::new(10, 25);
-        let node_a = Node::new(state_a, None);
-
-        let state_b = State::new(10, 25);
-        let node_b = Node::new(state_b, Some(Box::new(node_a.clone())));
-
-        assert!(node_a == node_b);
-    }
-
-    #[test]
-    fn equals_unequal_nodes_return_false() {
-        let state_a = State::new(10, 10);
-        let node_a = Node::new(state_a, None);
-
-        let state_b = State::new(10, 25);
-        let node_b = Node::new(state_b, None);
-
-        assert!(!(node_a == node_b));
+        assert_eq!(position, node.position);
+        assert_eq!(Tile::Path, node.value);
+        assert_eq!(neighbours, node.neighbours);
     }
 }

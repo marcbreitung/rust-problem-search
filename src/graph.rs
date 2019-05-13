@@ -1,146 +1,84 @@
-use crate::state::State;
+use std::collections::HashMap;
+use crate::node::Node;
+use crate::tile::Tile;
+use crate::position::Position;
 
-/// The graph represents the problem structure
+#[derive(Debug, Clone)]
+/// The graph build with nodes
 pub struct Graph {
+    pub tiles: Vec<u8>,
+    pub nodes: HashMap<String, Node>,
     pub width: u32,
     pub height: u32,
-    pub nodes: Vec<u8>,
 }
 
 impl Graph {
-    /// Returns a new graph with the given width and height
-    ///
-    /// # Arguments
-    ///
-    /// * `nodes` - a Vec<u8> with the type for each tile
-    /// * `width` - the number of horizontal tiles
-    /// * `height` - the number of vertical tiles
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use crate::rust_problem_search::graph::Graph;
-    ///
-    /// let graph = Graph::new(vec![
-    ///     1, 1, 1, 1,
-    ///     1, 1, 1, 1,
-    ///     1, 1, 1, 1,
-    ///     1, 1, 1, 1
-    /// ] , 4, 4);
-    /// ```
-    pub fn new(nodes: Vec<u8>, width: u32, height: u32) -> Self {
+    pub fn new(width: u32, height: u32) -> Self {
+        let tiles = vec![];
+        let nodes = HashMap::new();
         Graph {
+            tiles,
             nodes,
             width,
             height,
         }
     }
 
-    /// Returns the index of the elements at the given row and column
-    ///
-    /// # Arguments
-    ///
-    /// * `row` - the row index
-    /// * `column` - the column index
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use crate::rust_problem_search::graph::Graph;
-    ///
-    /// let graph = Graph::new(vec![
-    ///     1, 1, 1, 1,
-    ///     1, 1, 1, 1,
-    ///     1, 1, 1, 1,
-    ///     1, 1, 1, 1
-    /// ] , 4, 4);
-    ///
-    /// graph.get_index(1, 3);
-    ///
-    /// ```
-    pub fn get_index(&self, row: u32, column: u32) -> usize {
-        (row * self.width + column) as usize
-    }
-
-    /// Returns the value at the given index as Option
-    pub fn get_value(&self, index: usize) -> Option<u8> {
-        let mut result = None;
-        let value = self.nodes.get(index);
-        if let Some(value) = value {
-            result = Some(*value);
+    pub fn get_nodes(&mut self, tiles: Vec<u8>) -> HashMap<String, Node> {
+        self.tiles = tiles;
+        for (index, value) in self.tiles.iter().enumerate() {
+            let position = self.get_position_at_index(index);
+            let neighbours = if *value == 1 { self.get_neighbours_at_position(position) } else { vec![] };
+            let neighbours = neighbours.iter().map(|p| format!("{}", p)).collect();
+            self.nodes.insert(format!("{}", position), Node::new(position.clone(), Tile::from_u8(*value), neighbours));
         }
-        result
+        self.nodes.clone()
     }
 
-    /// Returns the value at the given state
-    pub fn get_value_at_state(&self, state: &State) -> Option<u8> {
-        let index = self.get_index(state.row, state.column);
-        self.get_value(index)
-    }
-
-    /// Returns a vec with all neighbours at the given row and column
-    pub fn get_neighbours(&self, row: u32, column: u32) -> Vec<State> {
+    fn get_neighbours_at_position(&self, position: Position) -> Vec<Position> {
         let mut result = vec![];
-        let rows = vec![row as i32 - 1, row as i32, row as i32 + 1, row as i32];
-        let columns = vec![column as i32, column as i32 + 1, column as i32, column as i32 - 1];
-
+        let rows = vec![position.row as i32 - 1, position.row as i32, position.row as i32 + 1, position.row as i32];
+        let columns = vec![position.column as i32, position.column as i32 + 1, position.column as i32, position.column as i32 - 1];
         let positions = rows.iter().zip(columns.iter());
 
         for (row, column) in positions {
             if *row >= 0 && *column >= 0 && *row < self.height as i32 && *column < self.width as i32 {
-                result.push(State::new(*row as u32, *column as u32));
-            }
-        }
-
-        result
-    }
-
-    /// Returns the state ath the given index
-    pub fn get_state_at_index(&self, index: usize) -> State {
-        let row = index as u32 / self.width;
-        let col = index as u32 - (self.width * row);
-        State::new(row, col)
-    }
-
-    /// Returns all states with the given value
-    pub fn get_states_with_value(&self, value: u8) -> Vec<State> {
-        let mut states = vec![];
-
-        for (index, _) in self.nodes.iter().enumerate() {
-            if let Some(v) = self.get_value(index) {
-                if v == value {
-                    let state = self.get_state_at_index(index);
-                    states.push(state)
-                }
-            }
-        }
-
-        states
-    }
-
-    /// Returns all states at the end of a path
-    pub fn get_end_states(&self) -> Vec<State> {
-        let mut result = vec![];
-        let path_states = self.get_states_with_value(1);
-
-        for state in path_states {
-            let neighbours = self.get_neighbours(state.row, state.column);
-
-            for neighbour in neighbours {
-                let neighbour_value = self.get_value_at_state(&neighbour);
-
-                match neighbour_value {
-                    Some(v) if v == 0 => {
-                        result.push(state.clone());
+                let neighbour_position = Position::new(*row as u32, *column as u32);
+                if let Some(value) = self.get_value_at_position(neighbour_position) {
+                    if value == Tile::Path {
+                        result.push(neighbour_position);
                     }
-                    _ => {}
                 }
             }
         }
-
         result
+    }
+
+    fn get_index_at_position(&self, position: Position) -> usize {
+        (position.row * self.width + position.column) as usize
+    }
+
+    fn get_position_at_index(&self, index: usize) -> Position {
+        let row = index as u32 / self.width;
+        let column = index as u32 - (self.width * row);
+        Position::new(row, column)
+    }
+
+    fn get_value_at_index(&self, index: usize) -> Option<Tile> {
+        let mut result = None;
+        let value = self.tiles.get(index);
+        if let Some(value) = value {
+            result = Some(Tile::from_u8(*value));
+        }
+        result
+    }
+
+    fn get_value_at_position(&self, position: Position) -> Option<Tile> {
+        let index = self.get_index_at_position(position);
+        self.get_value_at_index(index)
     }
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -148,156 +86,90 @@ mod tests {
 
     #[test]
     fn new_returns_new_graph() {
-        let nodes: Vec<u8> = vec![
-            1, 1, 2,
-            2, 1, 2,
-            2, 1, 2,
-        ];
-        let graph = Graph::new(nodes, 3, 3);
+        let graph = Graph::new(18, 18);
 
-        assert_eq!(graph.width, 3);
-        assert_eq!(graph.height, 3);
+        assert_eq!(18, graph.width);
+        assert_eq!(18, graph.height);
     }
 
     #[test]
-    fn get_index_with_row_and_column_returns_index() {
-        let nodes: Vec<u8> = vec![
-            1, 1, 2,
+    fn get_nodes_with_tiles_returns_nodes() {
+        let tiles: Vec<u8> = vec![
             2, 1, 2,
+            2, 1, 1,
             2, 1, 2,
         ];
-        let graph = Graph::new(nodes, 3, 3);
+        let mut graph = Graph::new(3, 3);
+        let nodes = graph.get_nodes(tiles);
 
-        assert_eq!(graph.get_index(1, 1), 4);
+        assert_eq!(Node::new(Position::new(0, 0), Tile::Ground, vec![]), nodes["0-0"]);
+        assert_eq!(Node::new(Position::new(0, 1), Tile::Path, vec!["1-1".to_string()]), nodes["0-1"]);
+        assert_eq!(Node::new(Position::new(0, 2), Tile::Ground, vec![]), nodes["0-2"]);
+
+        assert_eq!(Node::new(Position::new(1, 0), Tile::Ground, vec![]), nodes["1-0"]);
+        assert_eq!(Node::new(Position::new(1, 1), Tile::Path, vec!["0-1".to_string(), "1-2".to_string(), "2-1".to_string()]), nodes["1-1"]);
+        assert_eq!(Node::new(Position::new(1, 2), Tile::Path, vec!["1-1".to_string()]), nodes["1-2"]);
+
+        assert_eq!(Node::new(Position::new(2, 0), Tile::Ground, vec![]), nodes["2-0"]);
+        assert_eq!(Node::new(Position::new(2, 1), Tile::Path, vec!["1-1".to_string()]), nodes["2-1"]);
+        assert_eq!(Node::new(Position::new(2, 2), Tile::Ground, vec![]), nodes["2-2"]);
     }
 
     #[test]
-    fn get_value_with_index_returns_value() {
-        let nodes: Vec<u8> = vec![
-            1, 1, 2,
-            2, 3, 2,
+    fn get_neighbours_at_position_returns_vec_with_path_neighbours() {
+        let tiles: Vec<u8> = vec![
+            2, 1, 2,
+            2, 1, 1,
             2, 1, 2,
         ];
-        let graph = Graph::new(nodes, 3, 3);
-        let state = State::new(1, 1);
+        let mut graph = Graph::new(3, 3);
+        graph.tiles = tiles;
+        let nodes = graph.get_neighbours_at_position(Position::new(1, 1));
 
-        assert_eq!(graph.get_value_at_state(&state), Some(3));
+        assert_eq!(3, nodes.len());
+        assert_eq!(Some(&Position::new(0, 1)), nodes.get(0));
+        assert_eq!(Some(&Position::new(1, 2)), nodes.get(1));
+        assert_eq!(Some(&Position::new(2, 1)), nodes.get(2));
     }
 
     #[test]
-    fn get_value_at_state_with_state_returns_value() {
-        let nodes: Vec<u8> = vec![
-            1, 1, 2,
-            2, 3, 2,
-            2, 1, 2,
-        ];
-        let graph = Graph::new(nodes, 3, 3);
-
-        assert_eq!(graph.get_value(4), Some(3));
+    fn get_index_at_position_returns_index() {
+        let graph = Graph::new(3, 3);
+        assert_eq!(4, graph.get_index_at_position(Position::new(1, 1)));
     }
 
     #[test]
-    fn get_neighbours_with_row_and_column_returns_neighbours() {
-        let nodes: Vec<u8> = vec![
-            1, 1, 2,
-            2, 1, 2,
-            2, 1, 2,
-        ];
-        let graph = Graph::new(nodes, 3, 3);
-
-        let result = vec![
-            State::new(0, 1),
-            State::new(1, 2),
-            State::new(2, 1),
-            State::new(1, 0),
-        ];
-
-        assert_eq!(graph.get_neighbours(1, 1), result);
+    fn get_position_at_index_returns_position() {
+        let graph = Graph::new(3, 3);
+        assert_eq!(Position::new(1, 1), graph.get_position_at_index(4 as usize));
     }
 
     #[test]
-    fn get_neighbours_with_first_row_and_first_column_returns_neighbours() {
-        let nodes: Vec<u8> = vec![
-            1, 1, 2,
+    fn get_value_at_index_returns_value() {
+        let tiles: Vec<u8> = vec![
             2, 1, 2,
+            2, 1, 1,
             2, 1, 2,
         ];
-        let graph = Graph::new(nodes, 3, 3);
+        let mut graph = Graph::new(3, 3);
+        graph.tiles = tiles;
 
-        let result = vec![
-            State::new(0, 1),
-            State::new(1, 0)
-        ];
-
-        assert_eq!(graph.get_neighbours(0, 0), result);
+        assert_eq!(Some(Tile::Ground), graph.get_value_at_index(2 as usize));
+        assert_eq!(Some(Tile::Path), graph.get_value_at_index(4 as usize));
+        assert_eq!(None, graph.get_value_at_index(10 as usize));
     }
 
     #[test]
-    fn get_neighbours_with_last_row_and_last_column_returns_neighbours() {
-        let nodes: Vec<u8> = vec![
-            1, 1, 2,
+    fn get_value_at_position_returns_value() {
+        let tiles: Vec<u8> = vec![
             2, 1, 2,
-            2, 1, 2,
-        ];
-        let graph = Graph::new(nodes, 3, 3);
-
-        let result = vec![
-            State::new(1, 2),
-            State::new(2, 1)
-        ];
-
-        assert_eq!(graph.get_neighbours(2, 2), result);
-    }
-
-    #[test]
-    fn get_state_at_index_with_index_returns_state() {
-        let nodes: Vec<u8> = vec![
-            1, 1, 2,
-            2, 1, 2,
+            2, 1, 1,
             2, 1, 2,
         ];
-        let graph = Graph::new(nodes, 3, 3);
+        let mut graph = Graph::new(3, 3);
+        graph.tiles = tiles;
 
-        let state = State::new(1, 2);
-
-        assert_eq!(graph.get_state_at_index(5), state);
-    }
-
-    #[test]
-    fn get_states_with_value_with_value_one_returns_states_with_the_given_value() {
-        let nodes: Vec<u8> = vec![
-            2, 2, 2,
-            2, 1, 2,
-            2, 1, 2,
-        ];
-        let graph = Graph::new(nodes, 3, 3);
-
-        let state_a = State::new(1, 1);
-        let state_b = State::new(2, 1);
-
-        let states = vec![state_a, state_b];
-
-        assert_eq!(graph.get_states_with_value(1), states);
-    }
-
-    #[test]
-    fn get_end_states_returns_end_states() {
-        let nodes: Vec<u8> = vec![
-            2, 2, 2, 0, 0, 0,
-            2, 1, 1, 0, 0, 0,
-            2, 1, 2, 0, 0, 0,
-            0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0,
-        ];
-
-        let graph = Graph::new(nodes, 6, 6);
-
-        let state_a = State::new(1, 2);
-        let state_b = State::new(2, 1);
-
-        let ends = vec![state_a, state_b];
-
-        assert_eq!(graph.get_end_states(), ends);
+        assert_eq!(Some(Tile::Ground), graph.get_value_at_position(Position::new(0, 2)));
+        assert_eq!(Some(Tile::Path), graph.get_value_at_position(Position::new(1, 1)));
     }
 }
