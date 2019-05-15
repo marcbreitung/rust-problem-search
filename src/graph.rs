@@ -10,22 +10,23 @@ pub struct Graph {
     pub nodes: HashMap<String, Node>,
     pub width: u32,
     pub height: u32,
+    pub size: usize,
 }
 
 impl Graph {
-    pub fn new(width: u32, height: u32) -> Self {
-        let tiles = vec![];
+    pub fn new(tiles: Vec<u8>, width: u32, height: u32) -> Self {
         let nodes = HashMap::new();
+        let size: usize = (width * height) as usize;
         Graph {
             tiles,
             nodes,
             width,
             height,
+            size,
         }
     }
 
-    pub fn get_nodes(&mut self, tiles: Vec<u8>) -> HashMap<String, Node> {
-        self.tiles = tiles;
+    pub fn get_nodes(&mut self) -> HashMap<String, Node> {
         for (index, value) in self.tiles.iter().enumerate() {
             let position = self.get_position_at_index(index);
             let neighbours = if *value == 1 { self.get_neighbours_at_position(position) } else { vec![] };
@@ -33,6 +34,10 @@ impl Graph {
             self.nodes.insert(format!("{}", position), Node::new(position.clone(), Tile::from_u8(*value), neighbours));
         }
         self.nodes.clone()
+    }
+
+    pub fn get_index_at_position(&self, position: Position) -> usize {
+        (position.row * self.width + position.column) as usize
     }
 
     fn get_neighbours_at_position(&self, position: Position) -> Vec<Position> {
@@ -52,10 +57,6 @@ impl Graph {
             }
         }
         result
-    }
-
-    fn get_index_at_position(&self, position: Position) -> usize {
-        (position.row * self.width + position.column) as usize
     }
 
     fn get_position_at_index(&self, index: usize) -> Position {
@@ -86,10 +87,15 @@ mod tests {
 
     #[test]
     fn new_returns_new_graph() {
-        let graph = Graph::new(18, 18);
-
+        let tiles: Vec<u8> = vec![
+            2, 1, 2,
+            2, 1, 1,
+            2, 1, 2,
+        ];
+        let graph = Graph::new(tiles, 18, 18);
         assert_eq!(18, graph.width);
         assert_eq!(18, graph.height);
+        assert_eq!(324, graph.size);
     }
 
     #[test]
@@ -99,8 +105,8 @@ mod tests {
             2, 1, 1,
             2, 1, 2,
         ];
-        let mut graph = Graph::new(3, 3);
-        let nodes = graph.get_nodes(tiles);
+        let mut graph = Graph::new(tiles, 3, 3);
+        let nodes = graph.get_nodes();
 
         assert_eq!(Node::new(Position::new(0, 0), Tile::Ground, vec![]), nodes["0-0"]);
         assert_eq!(Node::new(Position::new(0, 1), Tile::Path, vec!["1-1".to_string()]), nodes["0-1"]);
@@ -122,8 +128,7 @@ mod tests {
             2, 1, 1,
             2, 1, 2,
         ];
-        let mut graph = Graph::new(3, 3);
-        graph.tiles = tiles;
+        let graph = Graph::new(tiles, 3, 3);
         let nodes = graph.get_neighbours_at_position(Position::new(1, 1));
 
         assert_eq!(3, nodes.len());
@@ -134,13 +139,13 @@ mod tests {
 
     #[test]
     fn get_index_at_position_returns_index() {
-        let graph = Graph::new(3, 3);
+        let graph = Graph::new(vec![], 3, 3);
         assert_eq!(4, graph.get_index_at_position(Position::new(1, 1)));
     }
 
     #[test]
     fn get_position_at_index_returns_position() {
-        let graph = Graph::new(3, 3);
+        let graph = Graph::new(vec![], 3, 3);
         assert_eq!(Position::new(1, 1), graph.get_position_at_index(4 as usize));
     }
 
@@ -151,8 +156,7 @@ mod tests {
             2, 1, 1,
             2, 1, 2,
         ];
-        let mut graph = Graph::new(3, 3);
-        graph.tiles = tiles;
+        let graph = Graph::new(tiles, 3, 3);
 
         assert_eq!(Some(Tile::Ground), graph.get_value_at_index(2 as usize));
         assert_eq!(Some(Tile::Path), graph.get_value_at_index(4 as usize));
@@ -166,8 +170,7 @@ mod tests {
             2, 1, 1,
             2, 1, 2,
         ];
-        let mut graph = Graph::new(3, 3);
-        graph.tiles = tiles;
+        let graph = Graph::new(tiles, 3, 3);
 
         assert_eq!(Some(Tile::Ground), graph.get_value_at_position(Position::new(0, 2)));
         assert_eq!(Some(Tile::Path), graph.get_value_at_position(Position::new(1, 1)));

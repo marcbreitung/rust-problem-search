@@ -4,20 +4,24 @@
 
 A simple breath first search.
 
+```rust
+let tiles: Vec<u8> = vec![
+    2, 2, 2, 2, 2, 2,
+    2, 1, 2, 2, 1, 2,
+    2, 1, 2, 2, 1, 2,
+    2, 1, 1, 1, 1, 2,
+    2, 1, 2, 2, 1, 2,
+    2, 1, 2, 2, 2, 2,
+];
+let mut graph = Graph::new(tiles, 6, 6);
+let result = BreathFirstSearch::search(&mut graph, "1-1", "1-4");
+let unwrap_result = result.unwrap();
 
-## Run with docker
-
-Cargo run
-````
-docker run --rm -v "$PWD":/app -w /app rust:latest cargo run
-````
-
-Cargo test
-````
-docker run --rm -v "$PWD":/app -w /app rust:latest cargo test
-````
-
-Cargo doc
-````
-docker run --rm -v "$PWD":/app -w /app rust:latest cargo doc
-````
+assert_eq!(vec![
+    0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0,
+    0, 1, 0, 0, 1, 0,
+    0, 1, 1, 1, 1, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0], BreathFirstSearch::get_path(&unwrap_result, &mut graph, "1-4"));
+```
