@@ -15,7 +15,7 @@ impl Node {
     /// # Arguments
     ///
     /// * `position` - A Position defines the position
-    /// * `value` - A Tile defines typ3 of this node
+    /// * `value` - A Tile defines type of this node
     /// * `neighbours` - A Vec<String> with the connected node keys
     ///
     /// # Example
