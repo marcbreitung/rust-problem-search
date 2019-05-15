@@ -13,6 +13,7 @@ let tiles: Vec<u8> = vec![
     2, 1, 2, 2, 1, 2,
     2, 1, 2, 2, 2, 2,
 ];
+
 let mut graph = Graph::new(tiles, 6, 6);
 let result = BreathFirstSearch::search(&mut graph, "1-1", "1-4");
 let unwrap_result = result.unwrap();
