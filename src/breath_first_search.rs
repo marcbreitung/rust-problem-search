@@ -9,7 +9,7 @@ use crate::node::Node;
 pub struct BreathFirstSearch {}
 
 impl BreathFirstSearch {
-    pub fn search(graph: &mut Graph, start: &str, goal: &str) -> Option<HashMap<String, String>> {
+    pub fn search(graph: &Graph, start: &str, goal: &str) -> Option<HashMap<String, String>> {
         let nodes = graph.get_nodes();
         let mut frontier = VecDeque::new();
         let mut explored = HashMap::new();
@@ -36,7 +36,7 @@ impl BreathFirstSearch {
         None
     }
 
-    pub fn get_path(result: &HashMap<String, String, RandomState>, graph: &mut Graph, goal: &str) -> Vec<u8> {
+    pub fn get_path(result: &HashMap<String, String, RandomState>, graph: &Graph, goal: &str) -> Vec<u8> {
         let mut tiles = vec![0; graph.size];
         let nodes = graph.get_nodes();
         let mut next = Some(goal);
@@ -61,7 +61,7 @@ impl BreathFirstSearch {
         tiles
     }
 
-    fn update_tile(graph: &mut Graph, tiles: &mut Vec<u8>, node: &Node) {
+    fn update_tile(graph: &Graph, tiles: &mut Vec<u8>, node: &Node) {
         let position: Position = node.position;
         let index = graph.get_index_at_position(position);
         tiles[index] = 1;
