@@ -80,8 +80,8 @@ mod tests {
             2, 1, 2,
             2, 1, 2,
         ];
-        let mut graph = Graph::new(tiles, 3, 3);
-        let result = BreathFirstSearch::search(&mut graph, "0-1", "2-1");
+        let graph = Graph::new(tiles, 3, 3);
+        let result = BreathFirstSearch::search(&graph, "0-1", "2-1");
         let unwrap_result = result.unwrap();
 
         assert_eq!("1-1".to_string(), unwrap_result["2-1"]);
@@ -99,8 +99,8 @@ mod tests {
             2, 1, 2, 2, 1, 2,
             2, 1, 2, 2, 2, 2,
         ];
-        let mut graph = Graph::new(tiles, 6, 6);
-        let result = BreathFirstSearch::search(&mut graph, "1-1", "1-4");
+        let graph = Graph::new(tiles, 6, 6);
+        let result = BreathFirstSearch::search(&graph, "1-1", "1-4");
         let unwrap_result = result.unwrap();
 
         assert_eq!(vec![
@@ -109,6 +109,6 @@ mod tests {
             0, 1, 0, 0, 1, 0,
             0, 1, 1, 1, 1, 0,
             0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0], BreathFirstSearch::get_path(&unwrap_result, &mut graph, "1-4"));
+            0, 0, 0, 0, 0, 0], BreathFirstSearch::get_path(&unwrap_result, &graph, "1-4"));
     }
 }

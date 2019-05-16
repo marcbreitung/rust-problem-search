@@ -13,9 +13,8 @@ let tiles: Vec<u8> = vec![
     2, 1, 2, 2, 1, 2,
     2, 1, 2, 2, 2, 2,
 ];
-
-let mut graph = Graph::new(tiles, 6, 6);
-let result = BreathFirstSearch::search(&mut graph, "1-1", "1-4");
+let graph = Graph::new(tiles, 6, 6);
+let result = BreathFirstSearch::search(&graph, "1-1", "1-4");
 let unwrap_result = result.unwrap();
 
 assert_eq!(vec![
@@ -24,5 +23,5 @@ assert_eq!(vec![
     0, 1, 0, 0, 1, 0,
     0, 1, 1, 1, 1, 0,
     0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0], BreathFirstSearch::get_path(&unwrap_result, &mut graph, "1-4"));
+    0, 0, 0, 0, 0, 0], BreathFirstSearch::get_path(&unwrap_result, &graph, "1-4"));
 ```
