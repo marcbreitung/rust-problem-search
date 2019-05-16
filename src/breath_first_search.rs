@@ -1,6 +1,6 @@
 use std::collections::vec_deque::VecDeque;
 use std::collections::HashMap;
-use std::collections::hash_map::RandomState;
+
 use crate::graph::Graph;
 use crate::position::Position;
 use crate::node::Node;
@@ -36,7 +36,7 @@ impl BreathFirstSearch {
         None
     }
 
-    pub fn get_path(result: &HashMap<String, String, RandomState>, graph: &Graph, goal: &str) -> Vec<u8> {
+    pub fn get_path(result: &HashMap<String, String>, graph: &Graph, goal: &str) -> Vec<u8> {
         let mut tiles = vec![0; graph.size];
         let nodes = graph.get_nodes();
         let mut next = Some(goal);
