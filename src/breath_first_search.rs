@@ -2,8 +2,8 @@ use std::collections::vec_deque::VecDeque;
 use std::collections::HashMap;
 
 use crate::graph::Graph;
-use crate::position::Position;
 use crate::node::Node;
+use crate::position::Position;
 
 #[derive(Debug, Clone)]
 pub struct BreathFirstSearch {}
@@ -75,11 +75,7 @@ mod tests {
 
     #[test]
     fn search_with_valid_path_returns_result() {
-        let tiles: Vec<u8> = vec![
-            2, 1, 2,
-            2, 1, 2,
-            2, 1, 2,
-        ];
+        let tiles: Vec<u8> = vec![2, 1, 2, 2, 1, 2, 2, 1, 2];
         let graph = Graph::new(tiles, 3, 3);
         let result = BreathFirstSearch::search(&graph, "0-1", "2-1");
         let unwrap_result = result.unwrap();
@@ -92,23 +88,19 @@ mod tests {
     #[test]
     fn get_vec_returns_result_as_vector() {
         let tiles: Vec<u8> = vec![
-            2, 2, 2, 2, 2, 2,
-            2, 1, 2, 2, 1, 2,
-            2, 1, 2, 2, 1, 2,
-            2, 1, 1, 1, 1, 2,
-            2, 1, 2, 2, 1, 2,
-            2, 1, 2, 2, 2, 2,
+            2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 1, 1, 2, 2, 1, 2, 2, 1,
+            2, 2, 1, 2, 2, 2, 2,
         ];
         let graph = Graph::new(tiles, 6, 6);
         let result = BreathFirstSearch::search(&graph, "1-1", "1-4");
         let unwrap_result = result.unwrap();
 
-        assert_eq!(vec![
-            0, 0, 0, 0, 0, 0,
-            0, 1, 0, 0, 1, 0,
-            0, 1, 0, 0, 1, 0,
-            0, 1, 1, 1, 1, 0,
-            0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0], BreathFirstSearch::get_path(&unwrap_result, &graph, "1-4"));
+        assert_eq!(
+            vec![
+                0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            BreathFirstSearch::get_path(&unwrap_result, &graph, "1-4")
+        );
     }
 }

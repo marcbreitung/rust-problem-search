@@ -28,7 +28,7 @@ impl Tile {
         match value {
             1 => Tile::Path,
             2 => Tile::Ground,
-            _ => Tile::None
+            _ => Tile::None,
         }
     }
 }

@@ -23,10 +23,7 @@ impl Position {
     /// let position = Position::new(10, 25);
     /// ```
     pub fn new(row: u32, column: u32) -> Self {
-        Position {
-            row,
-            column,
-        }
+        Position { row, column }
     }
 }
 
