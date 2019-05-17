@@ -27,11 +27,11 @@ impl Position {
         Position { row, column }
     }
 
-    /// Returns the manhattan distance between two states
+    /// Returns the manhattan distance between two positions
     ///
     /// # Arguments
     ///
-    /// * `state` - a state
+    /// * `position` - a position
     ///
     /// # Example
     ///
