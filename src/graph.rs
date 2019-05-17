@@ -144,7 +144,7 @@ mod tests {
             Node::new(
                 Position::new(1, 1),
                 Tile::Path,
-                vec!["0-1".to_string(), "1-2".to_string(), "2-1".to_string()]
+                vec!["0-1".to_string(), "1-2".to_string(), "2-1".to_string()],
             ),
             nodes["1-1"]
         );
@@ -216,7 +216,7 @@ mod tests {
             Node::new(
                 Position::new(1, 1),
                 Tile::Path,
-                vec!["0-1".to_string(), "1-2".to_string(), "2-1".to_string()]
+                vec!["0-1".to_string(), "1-2".to_string(), "2-1".to_string()],
             ),
             nodes["1-1"]
         );
