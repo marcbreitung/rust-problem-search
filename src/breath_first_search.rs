@@ -1,5 +1,5 @@
-use std::collections::vec_deque::VecDeque;
 use std::collections::HashMap;
+use std::collections::vec_deque::VecDeque;
 
 use crate::graph::Graph;
 use crate::node::Node;
@@ -70,8 +70,9 @@ impl BreathFirstSearch {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::graph::Graph;
+
+    use super::*;
 
     #[test]
     fn search_with_valid_path_returns_result() {

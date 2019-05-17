@@ -1,7 +1,8 @@
+use std::collections::HashMap;
+
 use crate::node::Node;
 use crate::position::Position;
 use crate::tile::Tile;
-use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
 /// The graph build with nodes
