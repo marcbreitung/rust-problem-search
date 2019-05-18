@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::node::Node;
 use crate::position::Position;
@@ -14,6 +14,13 @@ pub struct Graph {
 }
 
 impl Graph {
+    /// Returns a new graph
+    ///
+    /// # Arguments
+    ///
+    /// * `tiles` - A Vec<u8> with 1 for path, 2 for ground and 0 for empty tile
+    /// * `width` - The graphs width
+    /// * `height` - The graphs height
     pub fn new(tiles: Vec<u8>, width: u32, height: u32) -> Self {
         let size: usize = (width * height) as usize;
         Graph {
@@ -24,28 +31,41 @@ impl Graph {
         }
     }
 
+    /// Returns a HashMap, where the key is the position
+    /// and the value is a node
+    /// and the node neighbours are path tiles
     pub fn get_nodes(&self) -> HashMap<String, Node> {
-        self.get_neighbours_with_tile(Tile::Path)
+        let mut tiles = HashSet::new();
+        tiles.insert(Tile::Path);
+        self.get_neighbours_with_tile(&tiles)
     }
 
+    /// Returns a HashMap, where the key is the position
+    /// and the value is a node
+    /// and the node neighbours are path empty tiles
+    /// and the node tile is a path
     pub fn get_end_nodes(&self) -> HashMap<String, Node> {
-        let end_nodes = self.get_neighbours_with_tile(Tile::None);
+        let mut tiles = HashSet::new();
+        tiles.insert(Tile::None);
+        let end_nodes = self.get_neighbours_with_tile(&tiles);
         end_nodes
             .into_iter()
             .filter(|(_, n)| n.value == Tile::Path && !n.neighbours.is_empty())
             .collect()
     }
 
+    /// Returns the index in the tile vec
+    /// for a given position
     pub fn get_index_at_position(&self, position: Position) -> usize {
         (position.row * self.width + position.column) as usize
     }
 
-    fn get_neighbours_with_tile(&self, tile: Tile) -> HashMap<String, Node> {
+    fn get_neighbours_with_tile(&self, tiles: &HashSet<Tile>) -> HashMap<String, Node> {
         let mut nodes = HashMap::new();
         for (index, value) in self.tiles.iter().enumerate() {
             let position = self.get_position_at_index(index);
             let neighbours = if Tile::from_u8(*value) == Tile::Path {
-                self.get_neighbours_at_position(position, tile)
+                self.get_neighbours_at_position(position, tiles)
             } else {
                 vec![]
             };
@@ -58,7 +78,11 @@ impl Graph {
         nodes
     }
 
-    fn get_neighbours_at_position(&self, position: Position, tile: Tile) -> Vec<Position> {
+    fn get_neighbours_at_position(
+        &self,
+        position: Position,
+        tiles: &HashSet<Tile>,
+    ) -> Vec<Position> {
         let mut result = vec![];
         let rows = vec![
             position.row as i32 - 1,
@@ -79,7 +103,7 @@ impl Graph {
             {
                 let neighbour_position = Position::new(*row as u32, *column as u32);
                 if let Some(value) = self.get_value_at_position(neighbour_position) {
-                    if value == tile {
+                    if tiles.contains(&value) {
                         result.push(neighbour_position);
                     }
                 }
@@ -196,9 +220,12 @@ mod tests {
 
     #[test]
     fn get_neighbours_with_tile_with_tile_returns_nodes() {
+        let mut tile_types = HashSet::new();
+        tile_types.insert(Tile::Path);
+
         let tiles: Vec<u8> = vec![2, 1, 2, 2, 1, 1, 2, 1, 2];
         let graph = Graph::new(tiles, 3, 3);
-        let nodes = graph.get_neighbours_with_tile(Tile::Path);
+        let nodes = graph.get_neighbours_with_tile(&tile_types);
 
         assert_eq!(
             Node::new(Position::new(0, 0), Tile::Ground, vec![]),
@@ -246,9 +273,12 @@ mod tests {
 
     #[test]
     fn get_neighbours_at_position_returns_vec_with_path_neighbours() {
+        let mut tile_types = HashSet::new();
+        tile_types.insert(Tile::Path);
+
         let tiles: Vec<u8> = vec![2, 1, 2, 2, 1, 1, 2, 1, 2];
         let graph = Graph::new(tiles, 3, 3);
-        let nodes = graph.get_neighbours_at_position(Position::new(1, 1), Tile::Path);
+        let nodes = graph.get_neighbours_at_position(Position::new(1, 1), &tile_types);
 
         assert_eq!(3, nodes.len());
         assert_eq!(Some(&Position::new(0, 1)), nodes.get(0));
