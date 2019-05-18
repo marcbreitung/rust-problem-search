@@ -23,11 +23,15 @@ let problem = Problem::new(
 let result = BreathFirstSearch::search(&problem);
 let unwrap_result = result.unwrap();
 
-assert_eq!(vec![
-    0, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0,
-    0, 1, 0, 0, 1, 0,
-    0, 1, 1, 1, 1, 0,
-    0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0], BreathFirstSearch::get_path(&unwrap_result, &graph, &problem));
+assert_eq!(
+    vec![
+        0, 0, 0, 0, 0, 0,
+        0, 1, 0, 0, 1, 0,
+        0, 1, 0, 0, 1, 0,
+        0, 1, 1, 1, 1, 0,
+        0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0
+    ],
+    BreathFirstSearch::get_path(&unwrap_result, &graph, &problem)
+);
 ```
