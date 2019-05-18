@@ -29,7 +29,11 @@ impl Graph {
     }
 
     pub fn get_end_nodes(&self) -> HashMap<String, Node> {
-        self.get_neighbours_with_tile(Tile::None)
+        let end_nodes = self.get_neighbours_with_tile(Tile::None);
+        end_nodes
+            .into_iter()
+            .filter(|(_, n)| n.value == Tile::Path && !n.neighbours.is_empty())
+            .collect()
     }
 
     pub fn get_index_at_position(&self, position: Position) -> usize {
@@ -40,7 +44,7 @@ impl Graph {
         let mut nodes = HashMap::new();
         for (index, value) in self.tiles.iter().enumerate() {
             let position = self.get_position_at_index(index);
-            let neighbours = if *value == 1 {
+            let neighbours = if Tile::from_u8(*value) == Tile::Path {
                 self.get_neighbours_at_position(position, tile)
             } else {
                 vec![]

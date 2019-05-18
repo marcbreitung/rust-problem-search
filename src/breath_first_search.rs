@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use std::collections::vec_deque::VecDeque;
+use std::collections::HashMap;
 
 use crate::graph::Graph;
 use crate::node::Node;
