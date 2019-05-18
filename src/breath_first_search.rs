@@ -10,8 +10,11 @@ use crate::problem::Problem;
 pub struct BreathFirstSearch {}
 
 impl BreathFirstSearch {
-    pub fn search(problem: &Problem, start: &str, goal: &str) -> Option<HashMap<String, String>> {
+    pub fn search(problem: &Problem) -> Option<HashMap<String, String>> {
         let nodes = problem.nodes.clone();
+        let start = &problem.start.clone();
+        let goal = &problem.goal.clone();
+
         let mut frontier = VecDeque::new();
         let mut explored = HashMap::new();
         let mut parent = "".to_string();
@@ -79,8 +82,13 @@ mod tests {
     fn search_with_valid_path_returns_result() {
         let tiles: Vec<u8> = vec![2, 1, 2, 2, 1, 2, 2, 1, 2];
         let graph = Graph::new(tiles, 3, 3);
-        let problem = Problem::new(graph.get_nodes(), graph.size);
-        let result = BreathFirstSearch::search(&problem, "0-1", "2-1");
+        let problem = Problem::new(
+            graph.get_nodes(),
+            "0-1".to_string(),
+            "2-1".to_string(),
+            graph.size,
+        );
+        let result = BreathFirstSearch::search(&problem);
         let unwrap_result = result.unwrap();
 
         assert_eq!("1-1".to_string(), unwrap_result["2-1"]);
@@ -95,8 +103,13 @@ mod tests {
             2, 2, 1, 2, 2, 2, 2,
         ];
         let graph = Graph::new(tiles, 6, 6);
-        let problem = Problem::new(graph.get_nodes(), graph.size);
-        let result = BreathFirstSearch::search(&problem, "1-1", "1-4");
+        let problem = Problem::new(
+            graph.get_nodes(),
+            "1-1".to_string(),
+            "1-4".to_string(),
+            graph.size,
+        );
+        let result = BreathFirstSearch::search(&problem);
         let unwrap_result = result.unwrap();
 
         assert_eq!(
