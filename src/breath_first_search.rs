@@ -40,9 +40,10 @@ impl BreathFirstSearch {
         None
     }
 
-    pub fn get_path(result: &HashMap<String, String>, graph: &Graph, goal: &str) -> Vec<u8> {
+    pub fn get_path(result: &HashMap<String, String>, graph: &Graph, problem: &Problem) -> Vec<u8> {
         let mut tiles = vec![0; graph.size];
-        let nodes = graph.get_nodes();
+        let nodes = problem.nodes.clone();
+        let goal = &problem.goal.clone();
         let mut next = Some(goal);
 
         if let Some(node) = nodes.get(goal) {
@@ -117,7 +118,7 @@ mod tests {
                 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0
             ],
-            BreathFirstSearch::get_path(&unwrap_result, &graph, "1-4")
+            BreathFirstSearch::get_path(&unwrap_result, &graph, &problem)
         );
     }
 }
