@@ -4,13 +4,14 @@ use std::collections::HashMap;
 use crate::graph::Graph;
 use crate::node::Node;
 use crate::position::Position;
+use crate::problem::Problem;
 
 #[derive(Debug, Clone)]
 pub struct BreathFirstSearch {}
 
 impl BreathFirstSearch {
-    pub fn search(graph: &Graph, start: &str, goal: &str) -> Option<HashMap<String, String>> {
-        let nodes = graph.get_nodes();
+    pub fn search(problem: &Problem, start: &str, goal: &str) -> Option<HashMap<String, String>> {
+        let nodes = problem.nodes.clone();
         let mut frontier = VecDeque::new();
         let mut explored = HashMap::new();
         let mut parent = "".to_string();
@@ -78,7 +79,8 @@ mod tests {
     fn search_with_valid_path_returns_result() {
         let tiles: Vec<u8> = vec![2, 1, 2, 2, 1, 2, 2, 1, 2];
         let graph = Graph::new(tiles, 3, 3);
-        let result = BreathFirstSearch::search(&graph, "0-1", "2-1");
+        let problem = Problem::new(graph.get_nodes(), graph.size);
+        let result = BreathFirstSearch::search(&problem, "0-1", "2-1");
         let unwrap_result = result.unwrap();
 
         assert_eq!("1-1".to_string(), unwrap_result["2-1"]);
@@ -93,7 +95,8 @@ mod tests {
             2, 2, 1, 2, 2, 2, 2,
         ];
         let graph = Graph::new(tiles, 6, 6);
-        let result = BreathFirstSearch::search(&graph, "1-1", "1-4");
+        let problem = Problem::new(graph.get_nodes(), graph.size);
+        let result = BreathFirstSearch::search(&problem, "1-1", "1-4");
         let unwrap_result = result.unwrap();
 
         assert_eq!(
