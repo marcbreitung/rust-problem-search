@@ -34,7 +34,7 @@ impl Graph {
     /// Returns a HashMap, where the key is the position
     /// and the value is a node
     /// and the node neighbours are path tiles
-    pub fn get_nodes(&self) -> HashMap<String, Node> {
+    pub fn get_path_nodes(&self) -> HashMap<String, Node> {
         let mut tiles = HashSet::new();
         tiles.insert(Tile::Path);
         self.get_neighbours_with_tile(&tiles, &tiles)
@@ -42,9 +42,9 @@ impl Graph {
 
     /// Returns a HashMap, where the key is the position
     /// and the value is a node
-    /// and the node neighbours are path empty tiles
-    /// and the node tile is a path
-    pub fn get_end_nodes(&self) -> HashMap<String, Node> {
+    /// and the node neighbours are path or empty tiles
+    /// and the node tile is a path or empty tile
+    pub fn get_possible_nodes(&self) -> HashMap<String, Node> {
         let mut tiles = HashSet::new();
         tiles.insert(Tile::Path);
         tiles.insert(Tile::None);
@@ -148,10 +148,10 @@ mod tests {
     }
 
     #[test]
-    fn get_nodes_with_tiles_returns_nodes() {
+    fn get_path_nodes_returns_nodes() {
         let tiles: Vec<u8> = vec![2, 1, 2, 2, 1, 1, 2, 1, 2];
         let graph = Graph::new(tiles, 3, 3);
-        let nodes = graph.get_nodes();
+        let nodes = graph.get_path_nodes();
 
         assert_eq!(
             Node::new(Position::new(0, 0), Tile::Ground, vec![]),
@@ -198,16 +198,16 @@ mod tests {
     }
 
     #[test]
-    fn get_end_nodes_with_tiles_returns_nodes() {
+    fn get_possible_nodes_returns_nodes() {
         let tiles: Vec<u8> = vec![2, 1, 2, 0, 2, 1, 1, 0, 2, 1, 2, 0, 0, 0, 0, 0];
         let graph = Graph::new(tiles, 4, 4);
-        let nodes = graph.get_end_nodes();
+        let nodes = graph.get_possible_nodes();
 
         assert_eq!(
             Node::new(
                 Position::new(2, 1),
                 Tile::Path,
-                vec!["1-1".to_string(), "3-1".to_string()]
+                vec!["1-1".to_string(), "3-1".to_string()],
             ),
             nodes["2-1"]
         );
@@ -215,7 +215,7 @@ mod tests {
             Node::new(
                 Position::new(1, 2),
                 Tile::Path,
-                vec!["1-3".to_string(), "1-1".to_string()]
+                vec!["1-3".to_string(), "1-1".to_string()],
             ),
             nodes["1-2"]
         );
