@@ -49,6 +49,11 @@ impl BreathFirstSearch {
         let mut explored = HashMap::new();
         let mut parent = "".to_string();
 
+        if start == goal {
+            explored.insert(start.clone(), "".to_string());
+            return Some(explored);
+        }
+
         frontier.push_back((nodes[start].clone(), parent.clone()));
 
         if let Some((n, _)) = frontier.get_mut(1) {
@@ -170,6 +175,25 @@ mod tests {
 
         assert_eq!("1-1".to_string(), unwrap_result["2-1"]);
         assert_eq!("0-1".to_string(), unwrap_result["1-1"]);
+        assert_eq!("".to_string(), unwrap_result["0-1"]);
+    }
+
+    #[test]
+    fn search_with_start_equals_goal_returns_result() {
+        let tiles: Vec<u8> = vec![
+            2, 1, 2,
+            2, 1, 2,
+            2, 1, 2];
+        let graph = Graph::new(tiles, 3, 3);
+        let problem = Problem::new(
+            graph.get_path_nodes(),
+            "0-1".to_string(),
+            "0-1".to_string(),
+            graph.size,
+        );
+        let result = BreathFirstSearch::search(&problem);
+        let unwrap_result = result.unwrap();
+
         assert_eq!("".to_string(), unwrap_result["0-1"]);
     }
 
