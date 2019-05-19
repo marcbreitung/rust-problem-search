@@ -1,5 +1,5 @@
 use std::collections::vec_deque::VecDeque;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::graph::Graph;
 use crate::node::Node;
@@ -44,18 +44,25 @@ impl BreathFirstSearch {
         let goal = &problem.goal.clone();
 
         let mut frontier = VecDeque::new();
+        let mut frontier_hash = HashSet::new();
+
         let mut explored = HashMap::new();
         let mut parent = "".to_string();
 
         frontier.push_back((nodes[start].clone(), parent.clone()));
+
+        if let Some((n, _)) = frontier.get_mut(1) {
+            frontier_hash.insert(format!("{}", n.position.clone()));
+        }
 
         while let Some((node, parent_id)) = frontier.pop_front() {
             explored.insert(format!("{}", node.position), parent_id.clone());
             parent = format!("{}", node.position);
 
             for neighbour in node.neighbours.iter() {
-                if !explored.contains_key(neighbour) {
+                if !explored.contains_key(neighbour) && !frontier_hash.contains(neighbour) {
                     if neighbour != goal {
+                        frontier_hash.insert(format!("{}", neighbour));
                         frontier.push_back((nodes[neighbour].clone(), parent.clone()));
                     } else {
                         explored.insert(neighbour.clone(), parent.clone());
@@ -194,8 +201,12 @@ mod tests {
     #[test]
     fn search_with_possible_path() {
         let tiles: Vec<u8> = vec![
-            2, 2, 2, 0, 0, 0, 2, 1, 1, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 1, 1,
-            2, 0, 0, 0, 2, 2, 2,
+            2, 2, 2, 0, 0, 0,
+            2, 1, 1, 0, 0, 0,
+            2, 1, 2, 0, 0, 0,
+            0, 0, 0, 2, 2, 2,
+            0, 0, 0, 1, 1, 2,
+            0, 0, 0, 2, 2, 2,
         ];
         let graph = Graph::new(tiles, 6, 6);
         let problem = Problem::new(
@@ -209,8 +220,12 @@ mod tests {
 
         assert_eq!(
             vec![
-                0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1,
-                1, 0, 0, 0, 0, 0, 0, 0
+                0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 0,
+                0, 1, 1, 0, 0, 0,
+                0, 0, 1, 1, 1, 0,
+                0, 0, 0, 0, 0, 0,
             ],
             BreathFirstSearch::get_path(&unwrap_result, &graph, &problem)
         );
