@@ -10,6 +10,34 @@ use crate::problem::Problem;
 pub struct BreathFirstSearch {}
 
 impl BreathFirstSearch {
+    /// Returns an Option a HashMap containing the result
+    ///
+    /// # Arguments
+    ///
+    /// * `problem` The problem contains the start, the end and the nodes where to find the path
+    ///
+    /// # Example
+    /// ```
+    /// use rust_problem_search::breath_first_search::BreathFirstSearch;
+    /// use rust_problem_search::problem::Problem;
+    /// use rust_problem_search::graph::Graph;
+    ///
+    /// let tiles: Vec<u8> = vec![
+    ///     2, 1, 2,
+    ///     2, 1, 2,
+    ///     2, 1, 2];
+    ///
+    /// let graph = Graph::new(tiles, 3, 3);
+    ///
+    /// let problem = Problem::new(
+    ///     graph.get_path_nodes(),
+    ///     "0-1".to_string(),
+    ///     "2-1".to_string(),
+    ///     graph.size,
+    /// );
+    ///
+    /// let result = BreathFirstSearch::search(&problem);
+    /// ```
     pub fn search(problem: &Problem) -> Option<HashMap<String, String>> {
         let nodes = problem.nodes.clone();
         let start = &problem.start.clone();
@@ -40,6 +68,47 @@ impl BreathFirstSearch {
         None
     }
 
+    /// Converts a flat vector from the solution found with the search function
+    ///
+    ///
+    /// # Example
+    /// ```
+    /// use rust_problem_search::breath_first_search::BreathFirstSearch;
+    /// use rust_problem_search::problem::Problem;
+    /// use rust_problem_search::graph::Graph;
+    ///
+    /// let tiles: Vec<u8> = vec![
+    ///     2, 2, 2, 2, 2, 2,
+    ///     2, 1, 2, 2, 1, 2,
+    ///     2, 1, 2, 2, 1, 2,
+    ///     2, 1, 1, 1, 1, 2,
+    ///     2, 1, 2, 2, 1, 2,
+    ///     2, 1, 2, 2, 2, 2,
+    /// ];
+    /// let graph = Graph::new(tiles, 6, 6);
+    ///
+    /// let problem = Problem::new(
+    ///     graph.get_path_nodes(),
+    ///     "1-1".to_string(),
+    ///     "1-4".to_string(),
+    ///     graph.size,
+    /// );
+    /// let result = BreathFirstSearch::search(&problem);
+    ///
+    /// let unwrap_result = result.unwrap();
+    ///
+    /// assert_eq!(
+    ///     vec![
+    ///         0, 0, 0, 0, 0, 0,
+    ///         0, 1, 0, 0, 1, 0,
+    ///         0, 1, 0, 0, 1, 0,
+    ///         0, 1, 1, 1, 1, 0,
+    ///         0, 0, 0, 0, 0, 0,
+    ///         0, 0, 0, 0, 0, 0
+    ///     ],
+    ///     BreathFirstSearch::get_path(&unwrap_result, &graph, &problem)
+    /// );
+    /// ```
     pub fn get_path(result: &HashMap<String, String>, graph: &Graph, problem: &Problem) -> Vec<u8> {
         let mut tiles = vec![0; graph.size];
         let nodes = problem.nodes.clone();
