@@ -37,7 +37,7 @@ impl Graph {
     pub fn get_path_nodes(&self) -> HashMap<String, Node> {
         let mut tiles = HashSet::new();
         tiles.insert(Tile::Path);
-        self.get_neighbours_with_tile(&tiles, &tiles)
+        self.get_neighbours_with_tile(&tiles)
     }
 
     /// Returns a HashMap, where the key is the position
@@ -48,7 +48,7 @@ impl Graph {
         let mut tiles = HashSet::new();
         tiles.insert(Tile::Path);
         tiles.insert(Tile::None);
-        self.get_neighbours_with_tile(&tiles, &tiles)
+        self.get_neighbours_with_tile(&tiles)
     }
 
     /// Returns the index in the tile vec
@@ -59,14 +59,13 @@ impl Graph {
 
     fn get_neighbours_with_tile(
         &self,
-        neighbours_tiles: &HashSet<Tile>,
-        node_tiles: &HashSet<Tile>,
+        tiles: &HashSet<Tile>,
     ) -> HashMap<String, Node> {
         let mut nodes = HashMap::new();
         for (index, value) in self.tiles.iter().enumerate() {
             let position = self.get_position_at_index(index);
-            let neighbours = if node_tiles.contains(&Tile::from_u8(*value)) {
-                self.get_neighbours_at_position(position, neighbours_tiles)
+            let neighbours = if tiles.contains(&Tile::from_u8(*value)) {
+                self.get_neighbours_at_position(position, tiles)
             } else {
                 vec![]
             };
@@ -234,7 +233,7 @@ mod tests {
 
         let tiles: Vec<u8> = vec![2, 1, 2, 2, 1, 1, 2, 1, 2];
         let graph = Graph::new(tiles, 3, 3);
-        let nodes = graph.get_neighbours_with_tile(&tile_types, &tile_types);
+        let nodes = graph.get_neighbours_with_tile(&tile_types);
 
         assert_eq!(
             Node::new(Position::new(0, 0), Tile::Ground, vec![]),
